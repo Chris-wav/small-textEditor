@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./undo.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="toolbar">
+            <button class="bold" type="button">B</button>
+            <button class="italic" type="button">I</button>
+        </div>
+        <div name=" " id="inputArea" class="input-area" contenteditable="true"></div>
+        <div class="buttons">
+            <button class="undo" type="button">Undo</button>
+            <button class="redo" type="button">Redo</button>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="module" src="/js-ds/undo-redo/js/main.js"></script>
+</body>
+
+</html>

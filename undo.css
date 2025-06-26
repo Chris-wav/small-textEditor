@@ -1,0 +1,108 @@
+.container {
+    min-height: 95vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    box-sizing: border-box;
+    background: linear-gradient(to bottom right, #fef6f9, #e4f1ff);
+    font-family: 'Inter', sans-serif;
+}
+
+.input-area {
+    background-image: repeating-linear-gradient(to bottom,
+            #ffffff,
+            #ffffff 28px,
+            #dfe6e9 28px,
+            #dfe6e9 29px);
+    line-height: 28px;
+    /* Ίσο με το ύψος της γραμμής του background */
+    letter-spacing: 0;
+    white-space: pre-wrap;
+    padding: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 20px;
+    border: none;
+    width: 100%;
+    min-height: 300px;
+    resize: vertical;
+    outline: none;
+}
+
+.input-area:focus {
+    box-shadow: 0 0 0 3px #c3d9ff;
+}
+
+.buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.undo,
+.redo,
+.bold,
+.italic {
+    width: 70px;
+    height: 70px;
+    border: none;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    color: #333;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.undo:hover,
+.redo:hover,
+.bold:hover,
+.italic:hover {
+    background-color: #d0d0ff;
+    transform: scale(1.05);
+}
+
+.bold,
+.italic {
+    font-weight: bold;
+}
+
+.bold {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.flash {
+    animation: flashHighlight 0.4s;
+}
+
+@keyframes flashHighlight {
+    from {
+        background-color: #ffeaa7;
+    }
+
+    to {
+        background-color: white;
+    }
+}
+
+.toolbar {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
+.blue {
+    background-color: #d0d0ff;
+}
