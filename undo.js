@@ -10,16 +10,16 @@ $(function () {
 
     const debouncedStackPush = debounce(stackPush, 500);
 
-    // Bold toggle
+    // Bold toggle (θα αντικατασταθεί με applyBold)
     $bold.on('click', function () {
-        document.execCommand('bold');
+        applyBold(); // η δική σου συνάρτηση χωρίς execCommand
         $bold.toggleClass('blue');
         setTimeout(() => stackPush(), 0);
     });
 
-    // Italic toggle
+    // Italic toggle (θα αντικατασταθεί με applyItalic)
     $italic.on('click', function () {
-        document.execCommand('italic');
+        applyItalic(); // η δική σου συνάρτηση χωρίς execCommand
         $italic.toggleClass('blue');
         setTimeout(() => stackPush(), 0);
     });
@@ -79,5 +79,49 @@ $(function () {
             clearTimeout(timerId);
             timerId = setTimeout(() => fn.apply(this, args), delay);
         };
+    }
+    function applyBold() {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+
+        const range = selection.getRangeAt(0);
+        const selectedText = range.cloneContents();
+
+        toggleBold();
+
+        const strong = document.createElement("strong");
+        strong.appendChild(range.extractContents());
+        range.insertNode(strong);
+    }
+
+
+    function applyItalic() {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+        const range = getSelection.getRangeAt();
+        const italic = document.createElement('em');
+        italic.appendChild(range.extractContents());
+        range.insertNode(italic);
+
+    }
+
+    function toggleItalic() {
+        const firstNode = selectedText.firstChild;
+        if (firstNode || firstNode.nodeName === 'italic') {
+            const inner = firstNode.innerHTML || firstNode.textContent;
+            range.deleteContents();
+            range.insertNode(document.createTextNode(inner))
+        }
+
+    }
+
+    function toggleBold() {
+        const firstNode = selectedText.firstChild;
+        if (firstNode && firstNode.nodeName === 'strong') {
+            const inner = firstNode.innerHTML || firstNode.textContent;
+            range.deleteContents();
+            range.insertNode(document.createTextNode(inner));
+            return;
+        }
     }
 });

@@ -1,49 +1,63 @@
-/* ========================================================================
- * history.js
- * ------------------------------------------------------------------------
- * Manages the undo and redo history of the editor by maintaining two stacks:
- * - stack: stores all committed editor states
- * - redoStack: stores undone states for reapplication
- * ======================================================================== */
+// History module - Provides undo and redo functionality for the editor
+import { debounce } from './utils.js';
 
-export class History {
-    constructor(initial = "") {
-        this.stack = [initial];      // Stores current content states
-        this.redoStack = [];         // Stores undone states for potential redo
-    }
+export function initHistory($input) {
+    // Stack to keep track of the states for undo operations
+    const stack = ['']; // Initialize with an empty string (initial content)
 
-    /*
-     * Pushes a new editor state onto the history stack and
-     * clears any redo history to maintain proper sequencing.
+    // Stack to keep track of states for redo operations
+    const redoStack = [];
+
+    /**
+     * Adds the current content of the input element to the undo stack.
+     * 
+     * Uses debounce to limit how often states are saved (every 500ms),
+     * preventing excessive saves on rapid input.
      */
-    push(state) {
-        this.stack.push(state);
-        this.redoStack = [];
-    }
+    const push = debounce(() => {
+        stack.push($input.html()); // Save current HTML content to stack
+        redoStack.length = 0;      // Clear the redo stack on new changes
+    }, 500);
 
-    /*
-     * Performs an undo operation by reverting to the previous
-     * editor state, if one exists.
+    /**
+     * Undo the last change.
+     * 
+     * Removes the latest state from the undo stack and moves it to the redo stack,
+     * then restores the input's content to the previous state.
      */
-    undo() {
-        if (this.stack.length > 1) {
-            const last = this.stack.pop();
-            this.redoStack.push(last);
-            return this.stack[this.stack.length - 1];
+    function undo() {
+        if (stack.length > 1) {
+            const last = stack.pop();     // Remove the latest state
+            redoStack.push(last);          // Push it to the redo stack
+            $input.html(stack[stack.length - 1]); // Restore previous state
         }
-        return null;
+        flash(); // Provide visual feedback for the undo action
     }
 
-    /*
-     * Performs a redo operation by restoring the last undone
-     * editor state, if one exists.
+    /**
+     * Redo the previously undone change.
+     * 
+     * Restores the last undone state by popping it from the redo stack,
+     * pushing it back to the undo stack, and updating the input content.
      */
-    redo() {
-        if (this.redoStack.length > 0) {
-            const restored = this.redoStack.pop();
-            this.stack.push(restored);
-            return restored;
+    function redo() {
+        if (redoStack.length > 0) {
+            const restored = redoStack.pop();  // Get the last undone state
+            stack.push(restored);               // Push it back to undo stack
+            $input.html(restored);              // Restore content
         }
-        return null;
+        flash(); // Visual feedback for redo action
     }
+
+    /**
+     * Temporarily adds a CSS class to the input element to visually
+     * indicate that an undo or redo operation occurred.
+     */
+    function flash() {
+        $input.addClass('flash'); // Add flash effect class
+        setTimeout(() => $input.removeClass('flash'), 400); // Remove after 400ms
+    }
+
+    // Expose the API: push to save state, undo, and redo methods
+    return { push, undo, redo };
 }

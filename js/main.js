@@ -1,61 +1,44 @@
-/* ========================================================================
- * main.js
- * ------------------------------------------------------------------------
- * Entry point of the editor application.
- * Sets up all event listeners, handlers, and module integrations.
- * ======================================================================== */
-
-import { History } from '/js-ds/undo-redo/js/history.js';
-import { debounce } from '/js-ds/undo-redo/js/utils.js';
-import { toggleFormat, flash } from '/js-ds/undo-redo/js/editor.js';
+// Entry point - initializes editor components after DOM is fully loaded
+import { initEditor } from './editor.js';
+import { initHistory } from './history.js';
+import { bindUI } from './ui.js';
 
 $(function () {
+    // Cache jQuery selectors for main UI elements
     const $input = $('.input-area');
     const $bold = $('.bold');
     const $italic = $('.italic');
     const $undo = $('.undo');
     const $redo = $('.redo');
 
-    // Initialize the history module with current editor content
-    const history = new History($input.html());
-    const debouncedPush = debounce(() => history.push($input.html()), 500);
+    // Initialize history management for undo/redo functionality
+    const history = initHistory($input);
 
-    // Handle bold formatting
-    $bold.on('click', () => toggleFormat('bold', $bold, () => history.push($input.html())));
+    // Initialize editor with formatting capabilities and link to history
+    const editor = initEditor($input, history);
 
-    // Handle italic formatting
-    $italic.on('click', () => toggleFormat('italic', $italic, () => history.push($input.html())));
+    // Bind UI events (button clicks, input changes) to editor and history logic
+    bindUI({ $input, $bold, $italic, $undo, $redo }, editor, history);
+});
+// Entry point - initializes editor components after DOM is fully loaded
+import { initEditor } from './editor.js';
+import { initHistory } from './history.js';
+import { bindUI } from './ui.js';
 
-    // Track input changes and push to history with debounce
-    $input.on('input', () => debouncedPush());
+$(function () {
+    // Cache jQuery selectors for main UI elements
+    const $input = $('.input-area');
+    const $bold = $('.bold');
+    const $italic = $('.italic');
+    const $undo = $('.undo');
+    const $redo = $('.redo');
 
-    // Handle undo action
-    $undo.on('click', () => {
-        const prev = history.undo();
-        if (prev !== null) {
-            $input.html(prev);
-            flash($input);
-        }
-    });
+    // Initialize history management for undo/redo functionality
+    const history = initHistory($input);
 
-    // Handle redo action
-    $redo.on('click', () => {
-        const next = history.redo();
-        if (next !== null) {
-            $input.html(next);
-            flash($input);
-        }
-    });
+    // Initialize editor with formatting capabilities and link to history
+    const editor = initEditor($input, history);
 
-    // Keyboard shortcuts for undo/redo actions
-    $(document).on('keydown', function (e) {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
-            e.preventDefault();
-            $undo.click();
-        }
-        if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
-            e.preventDefault();
-            $redo.click();
-        }
-    });
+    // Bind UI events (button clicks, input changes) to editor and history logic
+    bindUI({ $input, $bold, $italic, $undo, $redo }, editor, history);
 });
